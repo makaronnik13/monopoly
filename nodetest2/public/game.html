@@ -1,462 +1,381 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
+<meta charset="UTF-8">
+<title></title>
 
-    <style type="text/css">
-        @font-face {
-            font-family: 'FalloutFont'; /*a name to be used later*/
-            src: url('./font.ttf'); /*URL to font*/
-        }
+<style type="text/css">
+    @font-face {
+        font-family: 'FalloutFont';
+        src: url('./font.ttf');
+    }
 
-        h1{
-            font-family: 'falloutfont';
-        }
-        :-webkit-full-screen {
-            width: 100%;
-        }
-        :-moz-full-screen {
-            width: 100%;
-        }
+    h1 {
+        font-family: 'falloutfont';
+    }
 
-        #pile2{
-            position: relative;
-        }
+    :-webkit-full-screen {
+        width: 100%;
+    }
 
-        #pile1{
-            position: relative;
-        }
+    :-moz-full-screen {
+        width: 100%;
+    }
 
+    .dicecontainer {
+        width: 5%;
+        height: 5%;
+        right: 47%;
+        top: 45%;
+        position: absolute;
+        z-index: 500;
+    }
 
-        .tg {
-            border-collapse: collapse;
-            border-spacing: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }
+    .token {
+        position: absolute;
+        bottom: 2%;
+        right: 8%;
+        width: 7%;
+        height: 10%;
+        z-index: 5000;
+    }
 
-        .container1{
-            position: absolute;
-            bottom: 21%;
-            left: 3%;
-        }
+    .money {
+        width: 20%;
+        height: 10%;
+        right: 55%;
+        top: 30%;
+        position: absolute;
+        z-index: 150;
+    }
 
-        .container2{
-            position: absolute;
-            right: 30%;
-            top: 2.5%;
-        }
+    .cash {
+        width: 100%;
+        height: 100%;
+    }
 
-        .dicecontainer{
-            width: 5%;
-            height: 5%;
-            right: 47%;
-            top: 45%;
-            position: absolute;
-            z-index: 500;
-        }
+    #gameBoard {
+        background: url("./images/board.png") no-repeat;
+        background-size: 100% 100%;
+        visibility: hidden;
+    }
 
-        .tg td {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            border-style: solid;
-            border-width: 1px;
-            overflow: hidden;
-            word-break: normal;
-            height: 8%;
-        }
+    #loadingScreen {
+    }
 
-        .tg th {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: normal;
-            border-style: solid;
-            border-width: 1px;
-            overflow: hidden;
-            word-break: normal;
-            background-size: 100% 100%;
-        }
+    body {
+        background: url("./images/board.png") no-repeat;
+        background-size: 100% 100%;
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
+    }
 
-        .tg .tg-yw4l {
-            position: relative;
-            vertical-align: top;
-        }
+    .invisibleButton {
+        background: transparent;
+        border-color: transparent;
+        cursor: default;
+        padding: 0 0;
+        outline: none;
+    }
 
+    .cap1 {
+        width: 5%;
+        height: 5%;
+        right: 60%;
+        top: 45%;
+        position: absolute;
+        z-index: 200;
+    }
 
-        .token{
-            position: absolute;
-            bottom: 2%;
-            right: 8%;
-            width: 7%;
-            height: 10%;
-            z-index: 5000;
-        }
+    .cap2 {
+        width: 5%;
+        height: 5%;
+        right: 63%;
+        top: 45%;
+        position: absolute;
+        z-index: 200;
+    }
 
-        .money{
-            width: 20%;
-            height: 10%;
-            right: 55%;
-            top: 30%;
-            position: absolute;
-            z-index: 150;
-        }
+    #tokens {
+        position: absolute;
+        visibility: hidden;
+        height: 100%;
+        width: 100%;
+    }
 
-        .cash{
-            width: 100%;
-            height: 100%;
-        }
+    .newCard2 {
+        position: absolute;
+        top: 79%;
+        right: 70%;
+        z-index: 1000;
+        height: 170px;
+        width: 260px
+    }
 
-        #gameBoard {
-            background: url("./images/board.png") no-repeat;
-            background-size: 100% 100%;
-            visibility: hidden;
-        }
+    .newCard1 {
+        position: absolute;
+        right: 3%;
+        top: 2.5%;
+        z-index: 1000;
+        height: 170px;
+        width: 260px
+    }
 
-
-        #loadingScreen{
-        }
-
-        body{
-            margin: 0 0 0 0;
-            padding: 0 0 0 0;
-        }
-
-
-
-        .invisibleButton {
-            background: transparent;
-            border-color: transparent;
-            cursor: default;
-            padding: 0 0;
-            outline: none;
-        }
+    body {
+        position: relative;
+    }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://rawgit.com/zachstronaut/jquery-animate-css-rotate-scale/master/jquery-animate-css-rotate-scale.js"></script>
 
 
-        .cap1{
-            width: 5%;
-            height: 5%;
-            right: 60%;
-            top: 45%;
-            position: absolute;
-            z-index: 200;
-        }
+<script>
+var animate_flaf = false;
+var playerId = 1;
+var gameId = 0;
 
-        .cap2{
-            width: 5%;
-            height: 5%;
-            right: 63%;
-            top: 45%;
-            position: absolute;
-            z-index: 200;
-        }
+function launchIntoFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
 
-        .pile1Button {
-            height: 170px;
-            width: 260px;
-            background: url('./images/back1.png') no-repeat;
-            background-size: 100% 100%;
-            top: 0;
-            bottom: 0;
-            position: absolute;
-            z-index: 100;
-        }
+function exitfs() {
+    if (document.cancelFullScreen) {
+        document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+    }
+}
 
-        .pile2Button {
-            height: 170px;
-            width: 260px;
-            background: url('./images/back2.png') no-repeat;
-            background-size: 100% 100%;
-            top: 0;
-            bottom: 0;
-            position: absolute;
-            z-index: 100;
-        }
-
-        #tokens{
-            position: absolute;
-            visibility: hidden;
-            height: 100%;
-            width: 100%;
-        }
-
-        .newCard1 {
-            position: absolute;
-            top: 79%;
-            right: 70%;
-            z-index: 1000;
-            height: 170px;
-            width: 260px
-        }
-
-        #innerBoard{
-            position: relative;
-        }
-        .newCard2 {
-            position: absolute;
-            right: 3%;
-            top: 2.5%;
-            z-index: 1000;
-            height: 170px;
-            width: 260px
-        }
-
-        body{
-            position: relative;
-        }
-    </style>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script src="https://rawgit.com/zachstronaut/jquery-animate-css-rotate-scale/master/jquery-animate-css-rotate-scale.js"></script>
-
-
-    <script>
-        var animate_flaf = false;
-        var playerId = 1;
-        var gameId = 0;
-
-        function launchIntoFullscreen(element) {
-            if(element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if(element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if(element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if(element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        }
-
-        function exitfs(){
-            if (document.cancelFullScreen) {
-                document.cancelFullScreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitCancelFullScreen) {
-                document.webkitCancelFullScreen();
-            }
-        }
-
-        $( "#loadingScreen" ).css("height", window.innerHeight);
-        $( window ).resize(function() {
-            $( "#board" ).css("height", window.innerWidth);
-        });
+$("#loadingScreen").css("height", window.innerHeight);
+$(window).resize(function () {
+    $("#board").css("height", window.innerWidth);
+});
 
 
 /*
-        function changeImage() {
-            document.getElementById("dice").src = "./images/dice" + (Math.floor(Math.random() * 6) + 1) + ".png";
-            if (animate_flaf) setTimeout("changeImage()", 100);
-            document.getElementById("dice2").src = "./images/dice" + (Math.floor(Math.random() * 6) + 1) + ".png";
-            if (animate_flaf) setTimeout("changeImage()", 100);
-        }
-*/
-        function addPlayer(token, id){
-            $.post("addPlayer", {
-                        playerId: playerId,
-                        game: gameId
-                    },
-                    function (result) {
-                    });
-
-            var playerToken = $("<img class='token'>");
-            playerToken.attr("id", "player"+id);
-            playerToken.attr("src", token);
-            $("#tokens").append(playerToken);
-            return playerToken.attr('id');
-        }
-
-        function rollDice() {
-
-            animate_flaf = true;
-            $("#dice").effect("shake", {direction: "up", distance: 6, times: 5}, function () {
-                animate_flaf = false;
-            });
-            $("#dice2").effect("shake", {direction: "down", distance: 4, times: 6}, function () {
-                animate_flaf = false;
-            });
-            $("#diceButton").effect("shake", {direction: "left", distance: 4, times: 3});
-            //var changing = setTimeout("changeImage()", 100);
-
-            var result = 0;
-
-            $.get( "rollDice", function( data ) {
-                $("#dice").attr('src', "./images/dice" + data + ".png");
-                result += parseInt(data);
+ function changeImage() {
+ document.getElementById("dice").src = "./images/dice" + (Math.floor(Math.random() * 6) + 1) + ".png";
+ if (animate_flaf) setTimeout("changeImage()", 100);
+ document.getElementById("dice2").src = "./images/dice" + (Math.floor(Math.random() * 6) + 1) + ".png";
+ if (animate_flaf) setTimeout("changeImage()", 100);
+ }
+ */
+function addPlayer(token, id) {
+    $.post("addPlayer", {
+                playerId: playerId,
+                game: gameId
+            },
+            function (result) {
             });
 
+    var playerToken = $("<img class='token'>");
+    playerToken.attr("id", "player" + id);
+    playerToken.attr("src", token);
+    $("#tokens").append(playerToken);
+    return playerToken.attr('id');
+}
 
-            $.get( "rollDice", function( data ) {
-                $("#dice2").attr('src', "./images/dice" + data + ".png");
-                result += parseInt(data);
-                moveOnce("#player1", result);
-            });
-        }
+function rollDice() {
+
+    animate_flaf = true;
+    $("#dice").effect("shake", {direction: "up", distance: 6, times: 5}, function () {
+        animate_flaf = false;
+    });
+    $("#dice2").effect("shake", {direction: "down", distance: 4, times: 6}, function () {
+        animate_flaf = false;
+    });
+    $("#diceButton").effect("shake", {direction: "left", distance: 4, times: 3});
+    //var changing = setTimeout("changeImage()", 100);
+
+    var result = 0;
+
+    $.get("rollDice", function (data) {
+        $("#dice").attr('src', "./images/dice" + data + ".png");
+        result += parseInt(data);
+    });
 
 
-        $.fn.animateRotate = function(angle, duration, easing, complete) {
-            return this.each(function() {
-                var $elem = $(this);
-                var size = $elem.getAttribute("width");
-                $({deg: 0}).animate({deg: angle}, {
-                    duration: duration,
-                    easing: easing,
-                    step: function(now) {
-                        $elem.css({
-                            transform: 'rotate(' + now + 'deg)',
-                            width: (size+Math.abs(now)*3)*1.5,
-                            height: size+Math.abs(now)*3
-                        });
-                    },
-                    complete: complete || $.noop
+    $.get("rollDice", function (data) {
+        $("#dice2").attr('src', "./images/dice" + data + ".png");
+        result += parseInt(data);
+        moveOnce("#player1", result);
+    });
+}
+
+
+$.fn.animateRotate = function (angle, duration, easing, complete) {
+    return this.each(function () {
+        var $elem = $(this);
+        var size = $elem.getAttribute("width");
+        $({deg: 0}).animate({deg: angle}, {
+            duration: duration,
+            easing: easing,
+            step: function (now) {
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)',
+                    width: (size + Math.abs(now) * 3) * 1.5,
+                    height: size + Math.abs(now) * 3
                 });
-
-            });
-        };
-
-        function moveOnce(player, dice){
-            $.get("position", {
-                        player: playerId,
-                        game: gameId,
-                        dices: dice
-                    },
-                    function (result) {
-                        var x = "";
-                        var y = "";
-                        position = result;
-
-                        if (position <= 10) {
-                            $(player).rotate(0);
-                            y = "1%";
-                        }
-                        if (position >= 20 && position <= 30) {
-
-                            $(player).rotate(180);
-                        y = "88%";
-                    }
-                        if (position > 10 && position < 20){
-                            $(player).rotate(90);
-                            y = 6+(position-10)*8+"%";
-                        }
-                        if (position > 30 && position < 40){
-                            $(player).rotate(-90);
-                            y = 85-(position-30)*8+"%";
-                        }
-
-                        if (position > 10 && position < 20) x = "90%";
-                        if (position > 30 && position < 40) x = "3%";
-                        if (position <=10) x = 6+position*8+"%";
-                        if (position > 20 && position < 30) x = 94-(position-19)*8+"%";
-                        $(player).animate({right:x, bottom: y},500);
-                        if ((position==2)||(position==17)||(position==33)) {
-                            getCard(0);
-                        }
-                        if ((position==7)||(position==22)||(position==36)) {
-                            getCard(1);
-                        }
-                    });
-
-            //$("#"+player).attr('right', $("#"+player).attr('right')+8%;
-        }
-
-        function getCard(pile) {
-            $.get("getCard", {
-                            player: playerId,
-                            game: gameId,
-                            pile: pile
-                        },
-                        function (result) {
-                            var bigCard = $('<img>');
-                            var cardStyle;
-                            var top;
-                            var right;
-                            if(pile == 0){
-                                cardStyle = "newCard1"
-                                bigCard.attr('src', "./images/back1.png");
-                                bigCard.data('back', "./images/back1.png");
-                                right = "35%";
-                                top = "40%";
-                            }
-                            else{
-                                cardStyle = "newCard2"
-                                bigCard.attr('src', "./images/back2.png");
-                                bigCard.data('back', "./images/back2.png");
-                                right = "35%";
-                                top = "40%";
-                            }
-
-
-
-
-                            bigCard.addClass('invisibleButton');
-                            bigCard.addClass(cardStyle);
-                            var container="#pile"+(pile+1);
-                            $("#innerBoard").append(bigCard);
-                            var angle = -45*(pile*2-1);
-                            var wid = $(bigCard).attr("height");
-                            $(bigCard).animate({rotate: angle+"deg", scale: '2.5', height:0, top: "20%", right: "17.5%"}, 500, function() {$(this).attr('src', result.img);})
-                            $(bigCard).animate({rotate: angle*2+"deg", scale: '2.5', height:170, top: "40%", right: "35%"}, 500);
-                            $(bigCard).click(function() {
-                                var top;
-                                var right;
-                                if ($(this).attr('class').split(/\s+/)[1]=="newCard1") {
-                                    top =  '79%';
-                                    right = '70%';
-                                }
-                                else {
-                                    top =  '2.5%';
-                                    right = '3%';
-                                }
-
-                                $(this).animate({rotate: 45+"deg", scale: '0.9', height:0, top: "20%", right: "17.5%"}, 500, function() {$(this).attr('src', $(this).data('back'));})
-                                $(this).animate({rotate: 0+"deg", scale: '1', height:170, right: right, top: top}, 500, function(){
-                                    $(this).remove();
-                                });
-                            });
-                            /*
-                            $(bigCard).click(function() {
-                                $(bigCard).animateRotate(90*((pile*2)-1));
-                            });
-                            $(bigCard).animateRotate(-90*((pile*2)-1));*/
-            }
-                );
-
-        }
-
-
-        //$("#
-        var fs = false;
-        //$(document).on("click", "#pile1Button", getCardFunction(0));
-        //$(document).on("click", "#pile2Button", getCardFunction(1));
-        $(document).on("click", "#fullscreen", function() {
-            if (fs){
-                exitfs();
-            }
-            else{
-                launchIntoFullscreen(document.getElementById("gameBoard"));
-            }
-            fs=!fs;
+            },
+            complete: complete || $.noop
         });
 
-        window.onload = function() {
-            $("#board").css("height", window.innerWidth);
-            $("#gameBoard").css( "visibility","visible");
-            $("#tokens").css( "visibility","visible");
-            $("#loadingScreen").hide();
-            player = addPlayer("./images/token1.png", 1);
-            $("#cap1").draggable();
-            $("#cap2").draggable();
-            $("#diceButton").draggable();
-        }
-    </script>
+    });
+};
+
+function moveOnce(player, dice) {
+    $.get("position", {
+                player: playerId,
+                game: gameId,
+                dices: dice
+            },
+            function (result) {
+                var x = "";
+                var y = "";
+                position = result;
+
+                if (position <= 10) {
+                    $(player).rotate(0);
+                    y = "1%";
+                }
+                if (position >= 20 && position <= 30) {
+
+                    $(player).rotate(180);
+                    y = "88%";
+                }
+                if (position > 10 && position < 20) {
+                    $(player).rotate(90);
+                    y = 6 + (position - 10) * 8 + "%";
+                }
+                if (position > 30 && position < 40) {
+                    $(player).rotate(-90);
+                    y = 85 - (position - 30) * 8 + "%";
+                }
+
+                if (position > 10 && position < 20) x = "90%";
+                if (position > 30 && position < 40) x = "3%";
+                if (position <= 10) x = 6 + position * 8 + "%";
+                if (position > 20 && position < 30) x = 94 - (position - 19) * 8 + "%";
+                $(player).animate({right: x, bottom: y}, 500);
+                if ((position == 2) || (position == 17) || (position == 33)) {
+                    getCard(0);
+                }
+                if ((position == 7) || (position == 22) || (position == 36)) {
+                    getCard(1);
+                }
+            });
+}
+
+function getCard(pile) {
+    $.get("getCard", {
+                player: playerId,
+                game: gameId,
+                pile: pile
+            },
+            function (result) {
+                var bigCard = $('<img>');
+                var cardStyle;
+                var top;
+                var right;
+                if (pile == 0) {
+                    cardStyle = "newCard1"
+                    bigCard.attr('src', "./images/back1.png");
+                    bigCard.data('back', "./images/back1.png");
+                    right = "35%";
+                    top = "40%";
+                }
+                else {
+                    cardStyle = "newCard2"
+                    bigCard.attr('src', "./images/back2.png");
+                    bigCard.data('back', "./images/back2.png");
+                    right = "35%";
+                    top = "40%";
+                }
+
+
+                bigCard.addClass('invisibleButton');
+                bigCard.addClass(cardStyle);
+                $("body").append(bigCard);
+                var angle = -45 * (pile * 2 - 1);
+                $(bigCard).animate({rotate: angle + "deg", scale: '2.5', height: 0, top: top / 2, right: right / 2}, 500, function () {
+                    $(this).attr('src', result.img);
+                })
+                $(bigCard).animate({rotate: angle * 2 + "deg", scale: '2.5', height: 170, top: top, right: right}, 500);
+                $(bigCard).click(function () {
+                    var top;
+                    var right;
+                    var midTop;
+                    var midRight;
+                    if ($(this).attr('class').split(/\s+/)[1] == "newCard2") {
+                        top = '79%';
+                        right = '70%';
+                        midTop = '80%';
+                        midRight = '82.5%';
+                    }
+                    else {
+                        top = '2.5%';
+                        right = '3%';
+                        midTop = '20%';
+                        midRight = '17.5%';
+                    }
+
+                    $(this).animate({rotate: 45 + "deg", scale: '0.9', height: 0, top: midTop, right: midRight}, 500, function () {
+                        $(this).attr('src', $(this).data('back'));
+                    })
+                    $(this).animate({rotate: 0 + "deg", scale: '1', height: 170, right: right, top: top}, 500, function () {
+                        $(this).remove();
+                    });
+                });
+
+            }
+    );
+
+}
+var fs = false;
+//$(document).on("click", "#pile1Button", getCardFunction(0));
+//$(document).on("click", "#pile2Button", getCardFunction(1));
+$(document).on("click", "#fullscreen", function () {
+    if (fs) {
+        exitfs();
+    }
+    else {
+        launchIntoFullscreen(document.getElementById("gameBoard"));
+    }
+    fs = !fs;
+});
+
+window.onload = function () {
+    $("#board").css("height", window.innerWidth);
+    $("#gameBoard").css("visibility", "visible");
+    $("#tokens").css("visibility", "visible");
+    $("#loadingScreen").hide();
+    player = addPlayer("./images/token1.png", 1);
+    $("#cap1").draggable();
+    $("#cap2").draggable();
+    $("#diceButton").draggable();
+}
+</script>
+
+
 </head>
 <body id="board">
-<div id = "tokens">
-    <img class="invisibleButton cap1" id = "cap1" src="./images/cap1.png"/>
-    <img class="invisibleButton cap2" id = "cap2" src="./images/cap2.png"/>
-    <div class="invisibleButton money" id = "money">
+<div id="tokens">
+    <img class="invisibleButton cap1" id="cap1" src="./images/cap1.png"/>
+    <img class="invisibleButton cap2" id="cap2" src="./images/cap2.png"/>
+
+    <div class="invisibleButton money" id="money">
         <h1 align="center">9000</h1>
         <img class="cash" src="./images/money/500.png"/>
     </div>
@@ -468,91 +387,5 @@
     </button>
 </div>
 <div id="loadingScreen"><img width="100%" height="100%" src="images/background.png"></div>
-<table class="tg" id="gameBoard">
-    <col width="12%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="8%">
-    <col width="12%">
-    <tr>
-        <th class="tg-031e" colspan="2" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" rowspan="2"></th>
-        <th class="tg-031e" colspan="2" rowspan="2"></th>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-yw4l" colspan="9" rowspan="9" id="innerBoard">
-
-            <div class="container1"><div id="pile1"><img class="invisibleButton pile1Button" id="pile1Button" src="./images/back1.png"/></div></div>
-            <div class="container2"><div id="pile2"><img class="invisibleButton pile2Button" id="pile2Button" src="./images/back2.png"/></div></div>
-        </td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2"></td>
-        <td class="tg-031e" colspan="2"></td>
-    </tr>
-    <tr>
-        <td class="tg-031e" colspan="2" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" rowspan="2"></td>
-        <td class="tg-031e" colspan="2" rowspan="2"></td>
-    </tr>
-    <tr>
-    </tr>
-</table>
 </body>
 </html>
